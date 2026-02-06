@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二手车价格对比 - 苏州站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .header-links a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .search-bar h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        select, input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+
+        .car-list {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-count {
+            color: #999;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .car-card {
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: white;
+        }
+
+        .car-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .car-card.selected {
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .car-info {
+            padding: 15px;
+        }
+
+        .car-name {
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .car-price {
+            color: #e74c3c;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .car-price span {
+            font-size: 14px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .car-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .car-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .car-location {
+            color: #999;
+            font-size: 13px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .compare-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .compare-bar.visible {
+            transform: translateY(0);
+        }
+
+        .compare-bar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compare-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .compare-count {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .compare-car-list {
+            display: flex;
+            gap: 10px;
+        }
+
+        .compare-car-item {
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compare-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-compare {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-clear {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            max-width: 1200px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .compare-table-container {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e8e8e8;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #f5f5f5;
+            color: #666;
+            font-weight: 500;
+            width: 120px;
+        }
+
+        .compare-table td {
+            min-width: 200px;
+        }
+
+        .compare-car-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .compare-car-price {
+            color: #e74c3c;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .compare-best {
+            background: #e8f5e9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-high {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .source-link {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+
+        .source-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .source-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            select, input {
+                width: 100%;
+            }
+            
+            .compare-bar-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .compare-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>二手车价格对比</h1>
+            <div class="header-links">
+                <a href="https://www.autohome.com.cn" target="_blank">汽车之家</a>
+                <a href="https://www.autohome.com.cn/suzhou" target="_blank">苏州站</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-bar">
+            <h2>🔍 筛选条件</h2>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>价格区间：</label>
+                    <select id="priceRange">
+                        <option value="">全部</option>
+                        <option value="0-5">5万以下</option>
+                        <option value="5-10">5-10万</option>
+                        <option value="10-15">10-15万</option>
+                        <option value="15-20">15-20万</option>
+                        <option value="20-30">20-30万</option>
+                        <option value="30-50">30-50万</option>
+                        <option value="50-999">50万以上</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>品牌：</label>
+                    <select id="brand">
+                        <option value="">全部</option>
+                        <option value="奥迪">奥迪</option>
+                        <option value="宝马">宝马</option>
+                        <option value="奔驰">奔驰</option>
+                        <option value="大众">大众</option>
+                        <option value="丰田">丰田</option>
+                        <option value="本田">本田</option>
+                        <option value="日产">日产</option>
+                        <option value="比亚迪">比亚迪</option>
+                        <option value="特斯拉">特斯拉</option>
+                        <option value="吉利">吉利</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>车龄：</label>
+                    <select id="carAge">
+                        <option value="">全部</option>
+                        <option value="1">1年以内</option>
+                        <option value="2">2年以内</option>
+                        <option value="3">3年以内</option>
+                        <option value="5">5年以内</option>
+                        <option value="10">10年以内</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>里程：</label>
+                    <select id="mileage">
+                        <option value="">全部</option>
+                        <option value="3">3万公里以内</option>
+                        <option value="5">5万公里以内</option>
+                        <option value="8">8万公里以内</option>
+                        <option value="10">10万公里以内</option>
+                    </select>
+                </div>
+                <button class="search-btn" onclick="filterCars()">搜索</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="car-list">
+                <div class="section-title">
+                    <span>热门二手车</span>
+                    <span class="result-count" id="resultCount">共 12 辆</span>
+                </div>
+                <div class="car-grid" id="carGrid">
+                    <!-- 车辆卡片将通过JS动态生成 -->
+                </div>
+                <div class="source-link">
+                    <a href="https://www.autohome.com.cn/suzhou/?from=m" target="_blank">查看汽车之家苏州站更多信息 →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="compare-bar" id="compareBar">
+        <div class="compare-bar-content">
+            <div class="compare-info">
+                <span class="compare-count" id="compareCount">0</span>
+                <div class="compare-car-list" id="compareCarList"></div>
+            </div>
+            <div class="compare-buttons">
+                <button class="btn-clear" onclick="clearCompare()">清空</button>
+                <button class="btn-compare" onclick="showCompareModal()">立即对比</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="compareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>车辆对比</h3>
+                <button class="close-btn" onclick="closeCompareModal()">&times;</button>
+            </div>
+            <div class="compare-table-container">
+                <table class="compare-table" id="compareTable">
+                    <!-- 对比表格将通过JS动态生成 -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟二手车数据
+        const carData = [
+            {
+                id: 1,
+                name: "奥迪 A4L 2022款 40 TFSI 豪华动感型",
+                brand: "奥迪",
+                price: 24.8,
+                originalPrice: 35.8,
+                year: 2022,
+                mileage: 2.3,
+                location: "苏州工业园区",
+                image: "https://via.placeholder.com/320x180/667eea/ffffff?text=奥迪A4L",
+                engine: "2.0T",
+                transmission: "7挡双离合",
+                fuel: "汽油",
+                color: "白色",
+                owner: "个人卖家"
+            },
+            {
+                id: 2,
+                name: "宝马 3系 2021款 325Li 运动曜夜套装",
+                brand: "宝马",
+                price: 26.5,
+                originalPrice: 37.9,
+                year: 2021,
+                mileage: 3.8,
+                location: "苏州高新区",
+                image: "https://via.placeholder.com/320x180/764ba2/ffffff?text=宝马3系",
+                engine: "2.0T",
+                transmission: "8挡手自一体",
+                fuel: "汽油",
+                color: "黑色",
+                owner: "车商认证"
+            },
+            {
+                id: 3,
+                name: "奔驰 C级 2022款 C260L 运动版",
+                brand: "奔驰",
+                price: 27.8,
+                originalPrice: 38.5,
+                year: 2022,
+                mileage: 2.1,
+                location: "苏州姑苏区",
+                image: "https://via.placeholder.com/320x180/e74c3c/ffffff?text=奔驰C级",
+                engine: "1.5T",
+                transmission: "9挡手自一体",
+                fuel: "汽油",
+                color: "银色",
+                owner: "个人卖家"
+            },
+            {
+                id: 4,
+                name: "大众 迈腾 2023款 380TSI DSG 领尊型",
+                brand: "大众",
+                price: 18.5,
+                originalPrice: 25.9,
+                year: 2023,
+                mileage: 1.5,
+                location: "苏州吴中区",
+                image: "https://via.placeholder.com/320x180/2ecc71/ffffff?text=大众迈腾",
+                engine: "2.0T",
+                transmission: "7挡双离合",
+                fuel: "汽油",
+                color: "白色",
+                owner: "车商认证"
+            },
+            {
+                id: 5,
+                name: "丰田 凯美瑞 2022款 双擎 2.5HG 领先版",
+                brand: "丰田",
+                price: 15.8,
+                originalPrice: 23.8,
+                year: 2022,
+                mileage: 2.9,
+                location: "苏州相城区",
+                image: "https://via.placeholder.com/320x180/3498db/ffffff?text=丰田凯美瑞",
+                engine: "2.5L混动",
+                transmission: "E-CVT",
+                fuel: "油电混合",
+                color: "灰色",
+                owner: "个人卖家"
+            },
+            {
+                id: 6,
+                name: "本田 雅阁 2023款 e:PHEV 插混版",
+                brand: "本田",
+                price: 16.9,
+                originalPrice: 24.5,
+                year: 2023,
+                mileage: 0.8,
+                location: "苏州吴江区",
+                image: "https://via.placeholder.com/320x180/9b59b6/ffffff?text=本田雅阁",
+                engine: "2.0L",
+                transmission: "E-CVT",
+                fuel: "插电混动",
+                color: "白色",
+                owner: "车商认证"
+            },
+            {
+                id: 7,
+                name: "日产 轩逸 2022款 e-Power 全电驱Pro",
+                brand: "日产",
+                price: 9.8,
+                originalPrice: 15.9,
+                year: 2022,
+                mileage: 1.8,
+                location: "苏州工业园区",
+                image: "https://via.placeholder.com/320x180/1abc9c/ffffff?text=日产轩逸",
+                engine: "1.2L",
+                transmission: "单速",
+                fuel: "增程电动",
+                color: "蓝色",
+                owner: "个人卖家"
+            },
+            {
+                id: 8,
+                name: "比亚迪 秦PLUS DM-i 2023款 冠军版",
+                brand: "比亚迪",
+                price: 8.5,
+                originalPrice: 12.5,
+                year: 2023,
+                mileage: 0.5,
+                location: "苏州高新区",
+                image: "https://via.placeholder.com/320x180/e67e22/ffffff?text=比亚迪秦PLUS",
+                engine: "1.5L",
+                transmission: "E-CVT",
+                fuel: "插电混动",
+                color: "白色",
+                owner: "车商认证"
+            },
+            {
+                id: 9,
+                name: "特斯拉 Model 3 2023款 后轮驱动版",
+                brand: "特斯拉",
+                price: 18.9,
+                originalPrice: 25.9,
+                year: 2023,
+                mileage: 1.2,
+                location: "苏州姑苏区",
+                image: "https://via.placeholder.com/320x180/34495e/ffffff?text=特斯拉Model3",
+                engine: "纯电",
+                transmission: "单速",
+                fuel: "纯电动",
+                color: "红色",
+                owner: "个人卖家"
+            },
+            {
+                id: 10,
+                name: "吉利 星越L 2023款 2.0TD 高功版",
+                brand: "吉利",
+                price: 12.8,
+                originalPrice: 17.8,
+                year: 2023,
+                mileage: 0.9,
+                location: "苏州吴中区",
+                image: "https://via.placeholder.com/320x180/16a085/ffffff?text=吉利星越L",
+                engine: "2.0T",
+                transmission: "8挡手自一体",
+                fuel: "汽油",
+                color: "黑色",
+                owner: "车商认证"
+            },
+            {
+                id: 11,
+                name: "奥迪 Q5L 2021款 45 TFSI 豪华动感型",
+                brand: "奥迪",
+                price: 28.5,
+                originalPrice: 42.5,
+                year: 2021,
+                mileage: 4.2,
+                location: "苏州相城区",
+                image: "https://via.placeholder.com/320x180/667eea/ffffff?text=奥迪Q5L",
+                engine: "2.0T",
+                transmission: "7挡双离合",
+                fuel: "汽油",
+                color: "白色",
+                owner: "车商认证"
+            },
+            {
+                id: 12,
+                name: "宝马 X3 2022款 xDrive30i 领先型",
+                brand: "宝马",
+                price: 32.8,
+                originalPrice: 45.9,
+                year: 2022,
+                mileage: 2.5,
+                location: "苏州工业园区",
+                image: "https://via.placeholder.com/320x180/764ba2/ffffff?text=宝马X3",
+                engine: "2.0T",
+                transmission: "8挡手自一体",
+                fuel: "汽油",
+                color: "蓝色",
+                owner: "个人卖家"
+            }
+        ];
+
+        let selectedCars = [];
+        let filteredCars = [...carData];
+
+        // 渲染车辆列表
+        function renderCars(cars) {
+            const grid = document.getElementById('carGrid');
+            const resultCount = document.getElementById('resultCount');
+            
+            if (cars.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8zM12 9l-4 4h3v4h2v-4h3l-4-4z"/>
+                        </svg>
+                        <p>没有找到符合条件的车辆</p>
+                    </div>
+                `;
+                resultCount.textContent = '共 0 辆';
+                return;
+            }
+            
+            resultCount.textContent = `共 ${cars.length} 辆`;
+            
+            grid.innerHTML = cars.map(car => {
+                const isSelected = selectedCars.some(sc => sc.id === car.id);
+                const carAge = new Date().getFullYear() - car.year;
+                
+                return `
+                    <div class="car-card ${isSelected ? 'selected' : ''}" onclick="toggleCompare(${car.id})">
+                        <img src="${car.image}" alt="${car.name}" class="car-image">
+                        <div class="car-info">
+                            <div class="car-name" title="${car.name}">${car.name}</div>
+                            <div class="car-price">
+                                ${car.price}<span>万</span>
+                                <span style="font-size: 12px; color: #999; margin-left: 10px;">新车价: ${car.originalPrice}万</span>
+                            </div>
+                            <div class="car-details">
+                                <div class="car-detail">📅 ${car.year}年</div>
+                                <div class="car-detail">🚗 ${car.mileage}万公里</div>
+                                <div class="car-detail">⚙️ ${car.transmission}</div>
+                            </div>
+                            <div class="car-location">📍 ${car.location}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 切换对比状态
+        function toggleCompare(carId) {
+            const car = carData.find(c => c.id === carId);
+            const index = selectedCars.findIndex(sc => sc.id === carId);
+            
+            if (index > -1) {
+                selectedCars.splice(index, 1);
+            } else if (selectedCars.length < 4) {
+                selectedCars.push(car);
+            } else {
+                alert('最多只能对比4辆车！');
+                return;
+            }
+            
+            updateCompareBar();
+            renderCars(filteredCars);
+        }
+
+        // 更新对比栏
+        function updateCompareBar() {
+            const bar = document.getElementById('compareBar');
+            const count = document.getElementById('compareCount');
+            const list = document.getElementById('compareCarList');
+            
+            count.textContent = selectedCars.length;
+            
+            if (selectedCars.length > 0) {
+                bar.classList.add('visible');
+                list.innerHTML = selectedCars.map(car => 
+                    `<div class="compare-car-item">${car.name}</div>`
+                ).join('');
+            } else {
+                bar.classList.remove('visible');
+            }
+        }
+
+        // 清空对比
+        function clearCompare() {
+            selectedCars = [];
+            updateCompareBar();
+            renderCars(filteredCars);
+        }
+
+        // 显示对比弹窗
+        function showCompareModal() {
+            if (selectedCars.length < 2) {
+                alert('请至少选择2辆车进行对比！');
+                return;
+            }
+            
+            const modal = document.getElementById('compareModal');
+            const table = document.getElementById('compareTable');
+            
+            // 找出每项的最佳值
+            const bestPrice = Math.min(...selectedCars.map(c => c.price));
+            const bestMileage = Math.min(...selectedCars.map(c => c.mileage));
+            const bestYear = Math.max(...selectedCars.map(c => c.year));
+            
+            let html = '<thead><tr><th>项目</th>';
+            selectedCars.forEach(car => {
+                html += `<td>
+                    <div class="compare-car-name">${car.name}</div>
+                    <div class="compare-car-price">${car.price}万</div>
+                </td>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            const rows = [
+                { label: '新车价格', key: 'originalPrice', unit: '万', lower: true },
+                { label: '折价率', custom: car => ((car.originalPrice - car.price) / car.originalPrice * 100).toFixed(1) + '%', lower: false },
+                { label: '上牌年份', key: 'year', unit: '年', lower: false },
+                { label: '行驶里程', key: 'mileage', unit: '万公里', lower: true },
+                { label: '发动机', key: 'engine', unit: '' },
+                { label: '变速箱', key: 'transmission', unit: '' },
+                { label: '燃料类型', key: 'fuel', unit: '' },
+                { label: '车身颜色', key: 'color', unit: '' },
+                { label: '所在地区', key: 'location', unit: '' },
+                { label: '卖家类型', key: 'owner', unit: '' }
+            ];
+            
+            rows.forEach(row => {
+                html += `<tr><th>${row.label}</th>`;
+                selectedCars.forEach(car => {
+                    let value = row.custom ? row.custom(car) : car[row.key] + row.unit;
+                    let className = '';
+                    
+                    if (row.lower !== undefined) {
+                        if (row.lower) {
+                            if (row.key === 'price' && car.price === bestPrice) className = 'compare-best';
+                            if (row.key === 'mileage' && car.mileage === bestMileage) className = 'compare-best';
+                            if (row.key === 'originalPrice' && car.originalPrice === Math.min(...selectedCars.map(c => c.originalPrice))) className = 'compare-best';
+                        } else {
+                            if (row.key === 'year' && car.year === bestYear) className = 'compare-best';
+                        }
+                    }
+                    
+                    if (className === 'compare-best') {
+                        value = `${value} <span class="badge badge-low">最优</span>`;
+                    }
+                    
+                    html += `<td class="${className}">${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody>';
+            table.innerHTML = html;
+            modal.classList.add('visible');
+        }
+
+        // 关闭对比弹窗
+        function closeCompareModal() {
+            document.getElementById('compareModal').classList.remove('visible');
+        }
+
+        // 筛选车辆
+        function filterCars() {
+            const priceRange = document.getElementById('priceRange').value;
+            const brand = document.getElementById('brand').value;
+            const carAge = document.getElementById('carAge').value;
+            const mileage = document.getElementById('mileage').value;
+            
+            filteredCars = carData.filter(car => {
+                // 价格筛选
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    if (car.price < min || car.price > max) return false;
+                }
+                
+                // 品牌筛选
+                if (brand && car.brand !== brand) return false;
+                
+                // 车龄筛选
+                if (carAge) {
+                    const age = new Date().getFullYear() - car.year;
+                    if (age > parseInt(carAge)) return false;
+                }
+                
+                // 里程筛选
+                if (mileage && car.mileage > parseInt(mileage)) return false;
+                
+                return true;
+            });
+            
+            // 清空已选择但不在筛选结果中的车辆
+            selectedCars = selectedCars.filter(sc => filteredCars.some(fc => fc.id === sc.id));
+            updateCompareBar();
+            renderCars(filteredCars);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('compareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCompareModal();
+            }
+        });
+
+        // 初始化
+        renderCars(carData);
+    </script>
+</body>
+</html>
